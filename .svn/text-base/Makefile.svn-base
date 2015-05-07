@@ -1,0 +1,25 @@
+TARGET=classes
+SRC=src/*.java
+TESTS=test/*.java
+CLASSES=$(TARGET)/*.class
+CLASSPATH=junit-4.8.1.jar:$(TARGET)/
+JAVA=java
+JAVAC=javac
+
+$(CLASSES) : $(SRC) $(TESTS) $(TARGET)/
+	$(JAVAC) -classpath $(CLASSPATH) -d $(TARGET) $(SRC) $(TESTS)
+
+simpletest: $(CLASSES)
+	$(JAVA) -classpath $(CLASSPATH) org.junit.runner.JUnitCore SimpleTest
+
+test: $(CLASSES)
+	$(JAVA) -classpath $(CLASSPATH) org.junit.runner.JUnitCore DueDateTest
+
+run: $(CLASSES)
+	$(JAVA) -classpath $(CLASSPATH) DueDateDriver 22 07 2010 2
+
+$(TARGET)/: 
+	mkdir -p $(TARGET)
+
+clean:
+	rm -rf $(TARGET)/

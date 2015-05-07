@@ -1,0 +1,114 @@
+/*
+** Program: duedate.c
+** Author : Denis Margetic - Code based on algorithm from
+**          http://www.cs.unc.edu/~livingst/DateToDay/
+** Date   : August 2006
+**
+** Description: This program takes a date and borrowing period and
+**              returns a due date whilst ignoring weekends.
+*/
+
+#include <stdio.h>
+
+/*---------------------------------------------------------------*/
+/* Data structures & declarations */
+
+static char *monthName[12] = {"January",
+			      "February",
+			      "March",
+			      "April",
+			      "May",
+			      "June",
+			      "July",
+			      "August",
+			      "September",
+			      "October",
+			      "November",
+			      "December" };
+
+static char *dayName[7] = {"Sunday",
+			   "Monday",
+			   "Tuesday",
+			   "Wednesday",
+			   "Thursday",
+			   "Friday",
+			   "Saturday" };
+
+static int mduration[12] = 
+  {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+
+static int mkeys[12] = {1, 4, 4, 0, 2, 5, 0, 3, 6, 1, 4, 6};
+
+static int day_of_week( int, int, int );
+
+/*----------------------------------------------------------------*/
+
+/* 
+ * This function converts date, month and year to the day of the week,
+ * returning an integer between 0 and 6, inclusive, with 0 indicating Sunday.
+ * This function should work for any year from 1901 to 2099.
+ */
+static int day_of_week( int date, int month, int year )
+{
+  int day;
+  
+  /* Calculate the day of week based on the input, including leap years */
+  day = ( year - 1900 ) + ( year - 1900 ) / 4 + mkeys[month] + date - 1;
+  
+  /* Remove the extra day added above for leap years for months
+     before it occurs */
+  if (( year % 4 == 0 ) && ( month < 2 )) {
+    day--;
+  }
+  day %= 7;
+  
+  return day;
+}
+
+/* 
+ * This is the main function which uses the day_of_week algorithm and
+ * returns the due date based on the input date and loan period.
+*/
+int main(int argc, char *argv[])
+{
+  int date, month, year, day, period;
+  
+  if (argc != 5) {
+    printf("Usage:  %s DD MM YYYY period\n", argv[0]);
+  }
+  else {
+    sscanf(argv[1], "%d", &date);
+    sscanf(argv[2], "%d", &month); 
+    month--;   /* Arrays are indexed starting from 0. */
+    sscanf(argv[3], "%d", &year);
+    sscanf(argv[4], "%d", &period);
+    
+    day = day_of_week(date, month, year);
+    
+    /* count down the loan period and keep incrementing the date */
+    while(period > 0) {
+      /* decrement loan period only for working days */
+      if (day != 0 && day != 6) {
+	  period--;
+      }
+
+      if (date < mduration[month]) {
+	date++;
+      }
+      else if (month < 12) {
+	date = 1;
+	month++;
+      }
+      else {
+	date = 1;
+	month = 1;
+	year++;
+      }
+      day = day_of_week( date, month, year );
+    }
+    
+    printf("The item is due on %s, %d %s %d\n", 
+	   dayName[day], date, monthName[month], year );
+  }
+  return 0;
+}

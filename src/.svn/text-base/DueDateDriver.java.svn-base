@@ -1,0 +1,22 @@
+/**
+ *
+ */
+public class DueDateDriver {
+    
+  public static void main(String[] args) 
+  {
+    int day = Integer.parseInt(args[0]);
+    int month = Integer.parseInt(args[1]);
+    int year = Integer.parseInt(args[2]);
+    int period = Integer.parseInt(args[3]);
+
+    Date loanDate = new Date(day, month, year);
+
+    Date dueDate = DueDate.getDueDate(loanDate, period);
+
+    Date exp = new Date(30, 7, 2010);
+    System.err.println( exp.equals(dueDate));
+
+    System.out.println("Due date is " + dueDate);
+  }
+}
